@@ -1,21 +1,22 @@
 const nodemailer = require('nodemailer')
 
-function SendMail({data}){
+function SendMail({ data }, res) {
     const transporter = nodemailer.createTransport({
         // service: 'gmail',
         host: "smtp-mail.outlook.com", // hostname
         port: 587, // port for secure SMTP
         secureConnection: false,
-        auth:{
-            user: process.env.GOOGLE_EMAIL,
-            pass: process.env.GOOGLE_PASS
+        auth: {
+            user: process.env.EMAIL_NODEMAILER,
+            pass: process.env.PASS_NODEMAILER
         }
     })
 
-console.log(data.email);
+    console.log('en el mensaje');
+    console.log(data.email);
     const MailOptions = {
-        from: process.env.GOOGLE_EMAIL,
-        to: 'eriber01@gmail.com',
+        from: process.env.EMAIL_NODEMAILER,
+        to: process.env.EMAIL_NODEMAILER_TO,
         subject: `Mensaje desde Travel Page Asunto: ${data.asunto}`,
 
         text: `Cuerpo del mensaje:
@@ -28,15 +29,18 @@ console.log(data.email);
         `
     }
 
-    transporter.sendMail(MailOptions, (err, info)=>{
-        if(err){
+    console.log("bomm");
+    transporter.sendMail(MailOptions, (err, info) => {
+        if (err) {
             console.log('No se pudo enviar el correo' + err);
-            // res.status(500).send('no se pudo enviar el correo')
+            res.status(500).send('no se pudo enviar el correo')
         }
 
         console.log('Se a enviado el correo');
-        // res.status(200).send('El correo a sido enviado')
+        res.json({
+            res: 'Se a enviado el correo'
+        })
     })
 }
 
-module.exports = {SendMail}
+module.exports = { SendMail }

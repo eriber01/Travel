@@ -10,7 +10,7 @@ export const ManageForm = (initialState = {}) => {
             [data.target]: data.value
         }))
     }
-    // console.log(state);
+    console.log(state);
 
     const reset = () => {
         setState(initialState)

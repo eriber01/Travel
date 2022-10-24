@@ -12,7 +12,6 @@ const Product = require('../models/product')
 //shoppingCart
 const ShoppingCart = require('../models/shoppingCart')
 
-
 //exportando el envio del email
 const email = require('../controllers/sendEmail')
 
@@ -21,29 +20,6 @@ const CreateProduct = require('../controllers/CMSController')
 
 //exportando el controlador de ShoppingCart
 const addShoppingCart = require('../controllers/addCart')
-
-//valida si el usuario esta autentificado
-// const isAuthenticated = (req, res, next) => {
-//     if (req.user) {
-//         next()
-//         return true
-//     } else {
-//         res.send(
-//             '<h3>Lo siento no estas Autorizado para entrar aqui</h3> <a href="/login">Login</a>'
-//         )
-
-//         return false
-//     }
-// }
-
-
-// module.exports = (routes, passport) => {
-
-//home
-routes.get('/', async (req, res) => {
-    const DataTravel = await Product.find()
-    res.render('index.html', { DataTravel })
-})
 
 //detalles del viaje
 routes.get('/travelDetails/:id', async (req, res) => {
@@ -84,100 +60,56 @@ routes.get('/addShoppingCart/:id', async (req, res) => {
     res.redirect('/shoppingCart/:id')
 })
 
-//login
-routes.get('/login', async (req, res) => {
-    res.render('login.html', { message: req.flash('message') })
-})
-
-routes.post('/login', passport.authenticate('local-login', {
-    successRedirect: '/shoppingCart/:id',
-    failureRedirect: 'login',
-    failureFlash: true
-}))
-
-//registro
-routes.get('/signup', async (req, res) => {
-    res.render('signup.html', { message: req.flash('messageSignup') })
-})
-
-routes.post('/signup', passport.authenticate('signup', {
-    successRedirect: '/shoppingCart/:id',
-    failureRedirect: 'signup',
-    failureFlash: true
-}))
-
-//signup and login with GOOGLE
-
-
-routes.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }))
-
-routes.get('/google/callback', passport.authenticate('google', { failureRedirect: '/login' }),
-    (req, res) => {
-
-        let userdata = req.user.emails[0].value
-        if (userdata === 'eriber01@gmail.com') {
-            res.redirect('/manejadorCMS')
-        } else {
-            res.redirect('/shoppingCart')
-        }
-    }
-
-)
-
 // envio de email
 
 routes.post('/sendEmail', async (req, res) => {
 
     const data = req.body
 
-    console.log(data);
-
     try {
-        await email.SendMail(data)
-        res.json({
-            res: 'Mensaje enviado'
-        })
+        await email.SendMail(data, res)
     } catch (error) {
         res.json({
-            res: error
+            res: 'error'
         })
     }
 
 })
 
-
-//logout
-routes.get('/logout', (req, res) => {
-    req.session = null;
-    req.logout;
-    res.redirect('/')
-})
-
-
 //manejador de contenido (CMS)
+routes.get('/getProducts', async (req, res) => {
 
-routes.get('/manejadorCMS', /* isAuthenticated, */ async (req, res) => {
-    const data = await Product.find()
+    try {
+        const data = await Product.find()
 
-    res.render('cms.html', { data })
+        if (data.length) {
+            return res.json({
+                status: 'success',
+                data
+            })
+        }
+
+    } catch (error) {
+        return res.json({
+            status: 'Error',
+            response: 'Hubo un error'
+        })
+    }
 })
 
 //ruta para crear producto
 routes.post('/manejadorCMS/createProduct', async (req, res) => {
     //envia los datos al controlador para guardarlos en mongo
-    await CreateProduct.createProduct(req)
-
-    res.redirect('/manejadorCMS')
+    await CreateProduct.createProduct(req, res)
 })
 
+
 //ruta para borrar un viaje
-routes.get('/manejadorCMS/deleteCMS/:id', async (req, res) => {
-    const { id } = await req.params;
-    const { public_id } = await Product.findById(id)
+routes.delete('/manejadorCMS/deleteCMS', async (req, res) => {
+    const data = await req.body;
+    console.log(data);
 
-    await CreateProduct.deleteTravel(id, public_id)
-
-    res.redirect("/manejadorCMS")
+    await CreateProduct.deleteTravel(data, res)
 })
 
 //ruta para actualizar el viaje
@@ -203,16 +135,5 @@ routes.post('/manejadorCMS/update/:id', async (req, res) => {
     res.redirect('/manejadorCMS')
 })
 
-
-routes.get('/prueba', async (req, res) => {
-
-
-    res.json({
-        prueba: 'hola mundo'
-    })
-
-})
-
-// }
 
 module.exports = routes

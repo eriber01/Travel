@@ -1,12 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    cart: [
-        { id: 1, price: 2800, name: 'Cuba' },
-        { id: 2, price: 3300, name: 'Republica Dominicana' },
-        { id: 3, price: 2600, name: 'España' },
-        { id: 4, price: 2500, name: 'Peru' }
-    ]
+    cart: [],
+    travels: []
 }
 
 
@@ -15,14 +11,11 @@ export const cartSlice = createSlice({
     initialState,
     reducers: {
         addCart: (state, { payload }) => {
-
-            console.log(payload);
-
             state.cart.push(payload)
         },
         removeCart: (state, { payload }) => {
-            return state = { cart: state.cart.filter(item => item.id !== payload.id) }
-        }
+            state = { cart: state.cart.filter(item => item._id !== payload._id) }
+        },
     }
 })
 

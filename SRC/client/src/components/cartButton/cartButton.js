@@ -1,20 +1,20 @@
 import React from 'react'
 import Nav from 'react-bootstrap/Nav'
 import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 
 
 const CartButton = () => {
     const cartData = useSelector(state => state.cart)
 
-    console.log(cartData.cart.length);
+    console.log(cartData);
+    //className='text-decoration-none text-white'
     return (
         <div>
-            <Nav.Link href='/cart'><i className="fas fa-shopping-cart fa-lg text-bg-dark"></i></Nav.Link>
-
-            <div className='boder bg-dark position-absolute' style={{ width: '150px', height: '150px' }}>
-
-
-            </div>
+            <Link className='text-decoration-none text-white d-flex align-items-center' to='/cart'>
+                <i className="fas fa-shopping-cart fa-lg text-bg-dark"></i>
+                <span className='p-2'>{cartData.cart.length}</span>
+            </Link>
         </div>
     )
 }
