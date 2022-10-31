@@ -41,16 +41,30 @@ export const CmsManager = async (data, key, e, reset) => {
             e.target.img.value = ''
 
             await axios.post('api/manejadorCMS/createProduct', data, config).then(res => {
-                toast.success(res.data.response)
+                if (data.status === 200) {
+                    toast.success(data.response)
+                } else if (data.status === 404) {
+                    toast.error(data.response)
+                }
                 reset()
             }).catch(err => {
-                toast.success(err.data.response)
+                toast.error(err.data.response)
             })
 
             return;
-        case 'update':
+        case 'updateTravels':
 
-            console.log('update');
+            await axios.put('api/manejadorCMS/update', data, config)
+                .then(res => {
+                    if (res.data.status === 200) {
+                        toast.success(res.data.response)
+                    } else if (res.data.status === 404) {
+                        toast.error(res.data.response)
+                    }
+                }).catch(err => {
+                    toast.error(err.data.response)
+                })
+
             return;
         case 'getTravels':
 
@@ -61,14 +75,11 @@ export const CmsManager = async (data, key, e, reset) => {
                     return data
                 }
             } catch (error) {
-                toast.error(error)
+                toast.error(error.data.response)
             }
 
             return;
         case 'deleteTravels':
-
-            console.log('delete');
-            console.log(data);
 
             await axios.delete('api/manejadorCMS/deleteCMS',
                 { data })
@@ -81,7 +92,7 @@ export const CmsManager = async (data, key, e, reset) => {
                         toast.error(data.response)
                     }
                 }).catch((error) => {
-                    console.log(error);
+                    toast.error(error.data.response)
                 })
 
             return;

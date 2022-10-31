@@ -48,60 +48,83 @@ async function createProduct(req, res) {
 
 //borra el de la base de datos
 async function deleteTravel(data, res) {
+    try {
 
-    const travel = await Product.findById(data._id)
+        const travel = await Product.findById(data._id)
 
-    console.log(travel);
-
-    if (!travel) {
-        return res.json({
-            status: 404,
-            response: 'El viaje no fue encontrado'
-        })
-    } else {
-
-        try {
-
-            await Product.remove({ _id: travel._id })
-            await Cloudinary.v2.uploader.destroy(travel.public_id)
-
-            return res.json({
-                status: 200,
-                response: 'Viaje Borrado de manera Exitosa'
-            })
-
-        } catch (error) {
+        if (!travel) {
             return res.json({
                 status: 404,
-                response: 'Error al borrar el viaje'
+                response: 'El viaje no fue encontrado'
             })
         }
 
-    }
+        await Product.remove({ _id: travel._id })
+        await Cloudinary.v2.uploader.destroy(travel.public_id)
 
+        return res.json({
+            status: 200,
+            response: 'Viaje Borrado de manera Exitosa'
+        })
+
+    } catch (error) {
+        return res.json({
+            status: 404,
+            response: 'Error al borrar el viaje'
+        })
+    }
 }
 
 
 //actualiza el viaje de la base de datos
-async function updateTravel(id, req, data) {
+async function updateTravel(res, data, req) {
 
-    await Cloudinary.v2.uploader.destroy(data.public_id)
+    try {
 
-    const ImageData = await Cloudinary.v2.uploader.upload(req.file.path)
+        let ImageData
+        const travel = await Product.findById(data._id)
+
+        if (!travel) {
+            return res.json({
+                status: 404,
+                response: 'El viaje no fue Encontrado'
+            })
+        }
+
+        console.log(data);
+
+        if (data.hasImg === 'true') {
+            await Cloudinary.v2.uploader.destroy(data.public_id)
+            ImageData = await Cloudinary.v2.uploader.upload(req.file.path)
+            console.log('entro');
+        }
+
+        console.log('BOOOOM');
+
+        const payload = {
+            destino: data.destino,
+            descripcion: data.descripcion,
+            precio: data.precio,
+            imgURL: data.hasImg === 'true' ? ImageData.url : data.imgURL,
+            public_id: data.hasImg === 'true' ? ImageData.public_id : data.public_id
+        }
+
+        await Product.updateOne({ _id: data._id }, payload)
+
+        await data.hasImg ? fs_extra.unlink(req.file.path) : null
 
 
-    const Data = {
-        destino: req.body.destino,
-        descripcion: req.body.descripcion,
-        precio: req.body.precio,
-        imgURL: ImageData.url,
-        public_id: ImageData.public_id
+        return res.json({
+            status: 200,
+            response: 'Viaje actualizado de manera Exitosa'
+        })
+
+    } catch (error) {
+        return res.json({
+            status: 404,
+            response: "Error al Actualizar el Viaje"
+        })
     }
-
-    await Product.updateOne({ _id: id }, Data)
-
-    //elimina el archivo subido del servidor node
-    await fs_extra.unlink(req.file.path)
 
 }
 

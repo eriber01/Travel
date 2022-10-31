@@ -7,13 +7,25 @@ export const EditOrDeleteModal = ({ state, action }) => {
 
     const dispatch = useDispatch()
 
-    const taskDelete = (item) => {
-        CmsManager(item, 'deleteTravels', null, null)
-        dispatch(deleteTravels(item._id))
+    const taskDelete = async (item) => {
+        await CmsManager(item, 'deleteTravels', null, null)
+
+        await CmsManager(null, 'getTravels', null, null)
+            .then(res => {
+                dispatch(getTravels(res.data))
+            })
+        // dispatch(deleteTravels(item._id))
     }
 
-    const taskUpdate = (item) => {
-        CmsManager(null, 'deleteTravels', null, null)
+    const taskUpdate = async (item) => {
+        console.log(item);
+        await CmsManager(item, 'updateTravels', null, null)
+
+        await CmsManager(null, 'getTravels', null, null)
+            .then(res => {
+                dispatch(getTravels(res.data))
+            })
+
     }
 
     console.log(state);
@@ -49,7 +61,7 @@ export const EditOrDeleteModal = ({ state, action }) => {
                                 className="btn btn-success text-white me-3"
                                 onClick={() => {
                                     state.validate ?
-                                        taskUpdate() :
+                                        taskUpdate(state.item) :
                                         taskDelete(state.item)
                                     action(false)
                                 }}

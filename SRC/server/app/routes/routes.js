@@ -15,8 +15,8 @@ const ShoppingCart = require('../models/shoppingCart')
 //exportando el envio del email
 const email = require('../controllers/sendEmail')
 
-//exportando el modelo de CreateProduct
-const CreateProduct = require('../controllers/CMSController')
+//exportando el modelo de CMSManagement
+const CMSManagement = require('../controllers/CMSController')
 
 //exportando el controlador de ShoppingCart
 const addShoppingCart = require('../controllers/addCart')
@@ -100,39 +100,20 @@ routes.get('/getProducts', async (req, res) => {
 //ruta para crear producto
 routes.post('/manejadorCMS/createProduct', async (req, res) => {
     //envia los datos al controlador para guardarlos en mongo
-    await CreateProduct.createProduct(req, res)
+    await CMSManagement.createProduct(req, res)
 })
 
 
 //ruta para borrar un viaje
 routes.delete('/manejadorCMS/deleteCMS', async (req, res) => {
     const data = await req.body;
-    console.log(data);
-
-    await CreateProduct.deleteTravel(data, res)
+    await CMSManagement.deleteTravel(data, res)
 })
 
-//ruta para actualizar el viaje
-routes.get('/manejadorCMS/update/:id', async (req, res) => {
-    const { id } = req.params;
+routes.put('/manejadorCMS/update', async (req, res) => {
+    const data = await req.body
 
-    const dataID = await Product.findById(id)
-
-    res.render('update.html', { dataID })
-})
-
-routes.post('/manejadorCMS/update/:id', async (req, res) => {
-
-    //toma el id desde el formulario para buscar el viaje en la DB
-    const { id } = req.params
-    const data = await Product.findById(id)
-
-    //llama y le pasa los datos al constructor para actualizar
-
-    await CreateProduct.updateTravel(id, req, data)
-
-    //console.log(data);
-    res.redirect('/manejadorCMS')
+    await CMSManagement.updateTravel(res, data, req)
 })
 
 

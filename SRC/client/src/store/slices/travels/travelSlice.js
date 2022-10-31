@@ -8,6 +8,22 @@ export const travelSlice = createSlice({
     name: 'travels',
     initialState,
     reducers: {
+        onChange: (state, { payload }) => {
+
+            state.travels = state.travels.map(item => {
+                if (item._id === payload.id) {
+                    if (payload.key === 'img') {
+                        item.hasImg = true
+                    }
+                    return {
+                        ...item,
+                        [payload.key]: payload.value
+                    }
+                }
+                return { ...item }
+            })
+
+        },
         getTravels: (state, { payload }) => {
             state.travels = payload
         },
@@ -17,6 +33,6 @@ export const travelSlice = createSlice({
     }
 })
 
-export const { getTravels, deleteTravels } = travelSlice.actions
+export const { onChange, getTravels, deleteTravels } = travelSlice.actions
 
 export default travelSlice.reducer;
