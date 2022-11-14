@@ -2,7 +2,7 @@ import axios from "axios"
 import { toast } from "react-toastify"
 
 export const CmsManager = async (data, key, e, reset) => {
-
+    const id = data
     console.log(data);
 
     const config = {
@@ -69,7 +69,7 @@ export const CmsManager = async (data, key, e, reset) => {
         case 'getTravels':
 
             try {
-                const { data } = await axios.get('api/getProducts')
+                const { data } = await axios.get('http:/api/getProducts')
                 if (data.status === 'success') {
                     console.log(data);
                     return data
@@ -94,6 +94,21 @@ export const CmsManager = async (data, key, e, reset) => {
                 }).catch((error) => {
                     toast.error(error.data.response)
                 })
+
+            return;
+        case "getUniqueTravels":
+
+            try {
+                console.log(id);
+                const { data } = await axios.get(`http:/api/getUniqueProducts/${id}`)
+                if (data.status === 200) {
+                    console.log(data);
+                    return data.response
+                }
+
+            } catch (error) {
+                toast.error(error.data.response)
+            }
 
             return;
         default:

@@ -1,9 +1,11 @@
 import React from 'react'
 import { useAuth0 } from '@auth0/auth0-react'
 import axios from 'axios'
-const AuthButtons = () => {
+import { Link } from 'react-router-dom'
+import { isAuthorized } from '../../services/isAuthorized'
+const AuthButtons = ({ isCMS }) => {
   const { user, loginWithPopup, logout, isAuthenticated, isLoading } = useAuth0()
-
+  console.log(isAuthorized(user?.sub));
   return (
     <div>
       {
@@ -18,10 +20,14 @@ const AuthButtons = () => {
             <div>
               <button className='btn btn-dark' onClick={() => logout({ returnTo: window.location.origin })}>Log Out</button>
             </div>
+
+            {isAuthorized(user?.sub) && !isCMS ?
+              <div className='mx-3'>
+                <Link className='btn btn-light border' to={'manejadorCMS'}>DashBoard</Link>
+              </div> : null
+            }
           </div>
       }
-      {/*       <a href="/login" className="nav-list">Log In <i className="fas fa-user"></i></a>
-      <a href="/signup" className="nav-list">Sing In <i className="fas fa-user-plus"></i></a> */}
     </div>
   )
 }

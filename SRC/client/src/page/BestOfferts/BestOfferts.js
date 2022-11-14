@@ -2,6 +2,8 @@ import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addCart } from "../../store/slices/cart/cartSlice";
+import { CmsManager } from "../../services/CmsManager";
+import { getTravelDetails } from "../../store/slices/travels/travelSlice";
 // import { CmsManager } from "../../services/CmsManager";
 
 export const BestOfferts = () => {
@@ -11,6 +13,16 @@ export const BestOfferts = () => {
 	const { travels } = useSelector(state => state.travels)
 
 	console.log(travels);
+
+	const getUniqueTravels = async (id) => {
+
+		await CmsManager(id, 'getTravels', null, null)
+			.then(res => {
+				console.log(res);
+				dispatch(getTravelDetails(res))
+			})
+	}
+
 	return (
 		<div className="offert" id="offers">
 			<div className="title-best">
@@ -41,7 +53,12 @@ export const BestOfferts = () => {
 											}}
 										>Reservar</button>
 										{/* <a href="/#">Ver mas detalles</a> */}
-										<Link className="btn btn-success w-75 p-0" to={'/detailsTravel'} >Ver mas detalles</Link>
+										<Link className="btn btn-success w-75 p-0"
+											to={`/detailsTravel/${item._id}`}
+											// onClick={() => getUniqueTravels(item._id)}
+										>
+											Ver mas detalles
+										</Link>
 									</div>
 								</div>
 							</div>

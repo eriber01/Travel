@@ -1,50 +1,84 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useParams } from "react-router-dom";
+import { CmsManager } from "../../services/CmsManager";
+import { getTravelDetails } from "../../store/slices/travels/travelSlice";
 import { AuthNav } from "../AuthNav/AuthNav";
 import './details.css'
 export const DetailsTravel = () => {
+  const { id } = useParams()
+  const dispatch = useDispatch()
 
+  console.log(id);
+
+  useEffect(() => {
+    // const getUniqueTravels = async (id) => {
+
+    CmsManager(id, 'getUniqueTravels', null, null)
+      .then(res => {
+        console.log(res);
+        dispatch(getTravelDetails(res))
+      })
+    // }
+  }, [dispatch, id])
+
+
+  const { travelDetails } = useSelector(state => state.travels)
+
+  console.log(travelDetails);
   setTimeout(() => {
     const leftTransition = document.querySelector('.image-travel')
-    leftTransition.classList.remove('leftTransition')
+    leftTransition?.classList?.remove('leftTransition')
 
     const rightTransition = document.querySelector('.details-travel')
-    rightTransition.classList.remove('rightTransition')
+    rightTransition?.classList?.remove('rightTransition')
   }, 300)
-  //details-travel rightTransition
+
+  //   {
+  //     "_id": "6361a0b16cee20397ea0f329",
+  //     "destino": "asdasdasd3",
+  //     "descripcion": "asdasdads",
+  //     "precio": 119,
+  //     "imgURL": "http://res.cloudinary.com/eriber/image/upload/v1667342513/q2kk2oqkxfs2xcrtiydz.jpg",
+  //     "public_id": "q2kk2oqkxfs2xcrtiydz",
+  //     "__v": 0
+  // }
   return (
     <div>
-      {/*       <nav className="detailsNav">
-        <a href="/" className="btn-home">HOME</a>
-      </nav> */}
+
       <AuthNav />
 
-      <div className="details-container mt-5 mb-5">
+      {travelDetails.map((item, index) => {
 
-        <div className="details">
-          <div className="image-travel leftTransition">
-            <img src="img/rep-dom.jpg" alt="" />
-          </div>
 
-          <div className="details-travel rightTransition">
+        return <div className="details-container mt-5 mb-5">
 
-            <h1> Titulo </h1>
+          <div className="details">
+            <div className="image-travel leftTransition">
+              <img src={item.imgURL} alt="" />
+            </div>
 
-            <p className="mb-5">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolor, quod magnam animi, vitae unde nam voluptatibus exercitationem veritatis possimus veniam numquam soluta, natus nostrum facere sapiente consequatur blanditiis adipisci cupiditate?
-            </p>
+            <div className="details-travel rightTransition">
 
-            <div className="mt-5 mb-5">
-              <span >
-                Precio: 9999
-              </span>
+              <h1> {item.destino} </h1>
 
+              <p className="mb-5">
+                {item.descripcion}
+              </p>
+
+              <div className="mt-5 mb-5">
+                <span >
+                  {item.precio}
+                </span>
+
+              </div>
             </div>
           </div>
-        </div>
 
-        <button class="btn btn-success mt-3" href="/addShoppingCart/<%= DataTravel._id %> ">Reservar el Viaje</button>
-      </div>
+          <button className="btn btn-success mt-3" href="/addShoppingCart/<%= DataTravel._id %> ">Reservar el Viaje</button>
+        </div>
+      })
+      }
     </div>
   )
 }

@@ -36,8 +36,6 @@ routes.get('/shoppingCart/:id', /* isAuthenticated, */ async (req, res) => {
     const cartID = req.session.passport.user._id
     const dataShopping = await ShoppingCart.find({ userID: cartID })
 
-    console.log(dataShopping);
-    console.log(cartID);
     res.render('shoppingCart.html', { dataShopping })
 })
 
@@ -47,7 +45,6 @@ routes.get('/addShoppingCart/:id', async (req, res) => {
     const { id } = await req.params;
 
     const dataProduct = await Product.findById(id)
-
 
     const session = await req.session
 
@@ -95,6 +92,24 @@ routes.get('/getProducts', async (req, res) => {
             response: 'Hubo un error'
         })
     }
+})
+
+routes.get('/getUniqueProducts/:id', async (req, res) => {
+    const { id } = req.params
+    console.log(req.params);
+    const data = await Product.findById(id)
+    try {
+        res.json({
+            status: 200,
+            response: data
+        })
+    } catch (error) {
+        res.json({
+            status: 200,
+            response: "Hubo un Error al Buscar el Viaje"
+        })
+    }
+
 })
 
 //ruta para crear producto

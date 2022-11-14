@@ -30,7 +30,7 @@ export const ManejadorCMS = () => {
                         <IsAuthenticate />
                         :
                         <div>
-                            <AuthNav />
+                            <AuthNav isCMS={true} />
                             <Tabs
                                 defaultActiveKey="home"
                                 id="fill-tab-example"
