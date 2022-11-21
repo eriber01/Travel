@@ -5,7 +5,7 @@ import Container from 'react-bootstrap/Container'
 import Nav from 'react-bootstrap/Nav'
 import { useSelector, useDispatch } from 'react-redux'
 import { decrement, increment, incrementByAmount } from '../../store/slices/counter/counterSlice'
-import { loginAction, logOutAction } from '../../store/slices/auth/authSlice'
+// import { loginAction, logOutAction } from '../../store/slices/auth/authSlice'
 import CartButton from '../cartButton/cartButton'
 
 export const Header = () => {

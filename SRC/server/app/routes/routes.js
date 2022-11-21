@@ -1,27 +1,41 @@
 const express = require('express')
 const routes = express.Router()
-
 const passport = require('passport')
 
-//exportando los modelos
-//usuario
-const User = require('../models/user')
-//producto o travel
+//users
+const User = require('../controllers/users')
+//product o travel
 const Product = require('../models/product')
 
 //shoppingCart
 const ShoppingCart = require('../models/shoppingCart')
 
-//exportando el envio del email
+//email
 const email = require('../controllers/sendEmail')
 
-//exportando el modelo de CMSManagement
+//CMSManagement
 const CMSManagement = require('../controllers/CMSController')
 
-//exportando el controlador de ShoppingCart
-const addShoppingCart = require('../controllers/addCart')
+//ShoppingCart
+const shoppingCart = require('../controllers/shoppingCart')
+const onMessage = require('../utils')
 
-//detalles del viaje
+//manage user
+routes.put('/manageUser', async (req, res) => {
+
+    try {
+        const data = await req.body
+
+        data.authId ? await User.createUpdateUser(data, res) : onMessage(res, 'No hay id de Usuario', 400, null)
+
+
+    } catch (error) {
+        onMessage(res, 'Error al Guardar el Usuario', 400, error)
+    }
+
+})
+
+//details del viaje
 routes.get('/travelDetails/:id', async (req, res) => {
     const { id } = await req.params
     const DataTravel = await Product.findById(id)
@@ -30,7 +44,20 @@ routes.get('/travelDetails/:id', async (req, res) => {
 
 })
 
-//area de la compra
+routes.get('/prueba', async (req, res) => {
+
+    ShoppingCart.find({}, (err, cart) => {
+        User.populate(cart, { path: 'user' }, (err, cart) => {
+
+            res.json({
+                res: cart
+            })
+        })
+    })
+
+})
+
+//area shopping
 routes.get('/shoppingCart/:id', /* isAuthenticated, */ async (req, res) => {
 
     const cartID = req.session.passport.user._id
@@ -39,26 +66,36 @@ routes.get('/shoppingCart/:id', /* isAuthenticated, */ async (req, res) => {
     res.render('shoppingCart.html', { dataShopping })
 })
 
-//agregar al carrito mediante el btn reservar
+// //add to cart
+// routes.get('/addShoppingCart/:id', async (req, res) => {
+//     const { id } = await req.params;
 
-routes.get('/addShoppingCart/:id', async (req, res) => {
-    const { id } = await req.params;
+//     const dataProduct = await Product.findById(id)
 
-    const dataProduct = await Product.findById(id)
+//     const session = await req.session
 
-    const session = await req.session
+//     if (req.user != undefined) {
+//         console.log('vieje creado');
+//         await shoppingCart(dataProduct, session)
+//     } else {
+//         console.log('no se pudo crear');
+//     }
+//     res.redirect('/shoppingCart/:id')
+// })
 
-    if (req.user != undefined) {
-        console.log('vieje creado');
-        await addShoppingCart(dataProduct, session)
-    } else {
-        console.log('no se pudo crear');
+routes.post("/addShoppingCart", async (req, res) => {
+    try {
+        const data = await req.bod
+        await shoppingCart.addShoppingCart(data, res)
+    } catch (error) {
+        res.json({
+            status: 400,
+            response: 'Hubo un Error al Agregar al Carrito'
+        })
     }
-    res.redirect('/shoppingCart/:id')
 })
 
-// envio de email
-
+// send de email
 routes.post('/sendEmail', async (req, res) => {
 
     const data = req.body
@@ -73,7 +110,7 @@ routes.post('/sendEmail', async (req, res) => {
 
 })
 
-//manejador de contenido (CMS)
+//CMS Manager
 routes.get('/getProducts', async (req, res) => {
 
     try {
@@ -112,24 +149,25 @@ routes.get('/getUniqueProducts/:id', async (req, res) => {
 
 })
 
-//ruta para crear producto
+//create travel
 routes.post('/manejadorCMS/createProduct', async (req, res) => {
-    //envia los datos al controlador para guardarlos en mongo
     await CMSManagement.createProduct(req, res)
 })
 
 
-//ruta para borrar un viaje
+//delete travel
 routes.delete('/manejadorCMS/deleteCMS', async (req, res) => {
     const data = await req.body;
     await CMSManagement.deleteTravel(data, res)
 })
 
+//update travel
 routes.put('/manejadorCMS/update', async (req, res) => {
     const data = await req.body
 
     await CMSManagement.updateTravel(res, data, req)
 })
 
+//get Statuses
 
 module.exports = routes

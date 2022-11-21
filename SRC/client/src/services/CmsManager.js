@@ -1,13 +1,12 @@
 import axios from "axios"
 import { toast } from "react-toastify"
+import axiosConfig from "./axiosConfig"
 
 export const CmsManager = async (data, key, e, reset) => {
     const id = data
     console.log(data);
 
-    const config = {
-        headers: { 'Content-Type': 'multipart/form-data' },
-    };
+    const config = axiosConfig()
 
     switch (key) {
         case 'create':

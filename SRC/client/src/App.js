@@ -17,8 +17,12 @@ import { useEffect } from 'react';
 import { CmsManager } from './services/CmsManager';
 import { getTravels } from './store/slices/travels/travelSlice';
 import { useDispatch } from 'react-redux';
+import { useAuth0 } from '@auth0/auth0-react';
+import { manageUser } from './services/manageUsers';
+import { userData } from './store/slices/auth/authSlice'
 
 function App() {
+  const { user, isLoading } = useAuth0()
 
   const dispatch = useDispatch()
   useEffect(() => {
@@ -26,7 +30,16 @@ function App() {
       .then(res => {
         dispatch(getTravels(res.data))
       })
-  }, [dispatch])
+
+    console.log(user);
+    console.log(isLoading);
+    isLoading === false && manageUser(user).then(res => {
+      console.log(res);
+
+      dispatch(userData(res))
+    })
+
+  }, [dispatch, isLoading, user])
 
   return (
     <div className="App">

@@ -29,7 +29,6 @@ async function createProduct(req, res) {
 
     await newProduct.save((err, result) => {
         if (err) {
-            console.log('hay un error');
             return res.json({
                 status: 'error',
                 response: 'Hubo un error'

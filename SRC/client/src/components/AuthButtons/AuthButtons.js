@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 import { isAuthorized } from '../../services/isAuthorized'
 const AuthButtons = ({ isCMS }) => {
   const { user, loginWithPopup, logout, isAuthenticated, isLoading } = useAuth0()
-  console.log(isAuthorized(user?.sub));
+  console.log(user);
   return (
     <div>
       {
