@@ -10,7 +10,6 @@ const getUser = async (id, path) => {
 
 const createUpdateUser = async (data, res) => {
     try {
-        // const user = await User.findOne({ authId: data.authId })
 
         const user = await getUser(data.authId, 'authId')
 
@@ -38,7 +37,7 @@ const createUpdateUser = async (data, res) => {
 
         await payloadCreate.save((error, result) => {
             if (error) {
-                return onMessage(res, 'Error al Guardar el Usuario', 400, error)
+                return onMessage(res, 'Error al Guardar el Usuario', 400, error, null)
             }
 
             return onMessage(res, 'Usuario Creado de Manera Exitosa', 200, null, result)

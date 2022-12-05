@@ -4,7 +4,6 @@ import axiosConfig from "./axiosConfig"
 
 export const CmsManager = async (data, key, e, reset) => {
     const id = data
-    console.log(data);
 
     const config = axiosConfig()
 
@@ -39,7 +38,7 @@ export const CmsManager = async (data, key, e, reset) => {
             e.target.precio.value = ''
             e.target.img.value = ''
 
-            await axios.post('api/manejadorCMS/createProduct', data, config).then(res => {
+            await axios.post('/api/manejadorCMS/createProduct', data, config).then(res => {
                 if (data.status === 200) {
                     toast.success(data.response)
                 } else if (data.status === 404) {
@@ -53,7 +52,7 @@ export const CmsManager = async (data, key, e, reset) => {
             return;
         case 'updateTravels':
 
-            await axios.put('api/manejadorCMS/update', data, config)
+            await axios.put('/api/manejadorCMS/update', data, config)
                 .then(res => {
                     if (res.data.status === 200) {
                         toast.success(res.data.response)
@@ -68,8 +67,8 @@ export const CmsManager = async (data, key, e, reset) => {
         case 'getTravels':
 
             try {
-                const { data } = await axios.get('http:/api/getProducts')
-                if (data.status === 'success') {
+                const { data } = await axios.get('/api/getProducts')
+                if (data.status === 200) {
                     console.log(data);
                     return data
                 }
@@ -80,7 +79,7 @@ export const CmsManager = async (data, key, e, reset) => {
             return;
         case 'deleteTravels':
 
-            await axios.delete('api/manejadorCMS/deleteCMS',
+            await axios.delete('/api/manejadorCMS/deleteCMS',
                 { data })
                 .then(({ data }) => {
                     console.log(data);
@@ -98,11 +97,9 @@ export const CmsManager = async (data, key, e, reset) => {
         case "getUniqueTravels":
 
             try {
-                console.log(id);
-                const { data } = await axios.get(`http:/api/getUniqueProducts/${id}`)
+                const { data } = await axios.get(`/api/getUniqueProducts/${id}`)
                 if (data.status === 200) {
-                    console.log(data);
-                    return data.response
+                    return data.data
                 }
 
             } catch (error) {

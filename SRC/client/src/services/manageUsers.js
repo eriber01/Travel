@@ -6,7 +6,7 @@ import { isAuthorized } from "./isAuthorized";
 export const manageUser = async (data) => {
 
     const config = axiosConfig();
-
+    console.log(data);
     const payload = {
         name: data.name,
         email: data.email,
@@ -14,7 +14,7 @@ export const manageUser = async (data) => {
         rol: isAuthorized(data?.sub) ? 'admin' : null
     };
 
-    const { data: userData } = await axios.put('api/manageUser', payload, config)
+    const { data: userData } = await axios.put('/api/manageUser', payload, config)
 
     console.log(userData);
 

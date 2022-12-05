@@ -28,70 +28,55 @@ routes.put('/manageUser', async (req, res) => {
 
         data.authId ? await User.createUpdateUser(data, res) : onMessage(res, 'No hay id de Usuario', 400, null)
 
-
     } catch (error) {
         onMessage(res, 'Error al Guardar el Usuario', 400, error)
     }
 
 })
 
-//details del viaje
-routes.get('/travelDetails/:id', async (req, res) => {
-    const { id } = await req.params
-    const DataTravel = await Product.findById(id)
-    console.log(DataTravel);
-    res.render('travelDetails.html', { DataTravel })
-
-})
 
 routes.get('/prueba', async (req, res) => {
 
-    ShoppingCart.find({}, (err, cart) => {
-        User.populate(cart, { path: 'user' }, (err, cart) => {
+    const data = await ShoppingCart.find({ user: '637ae8a164a7b5be7c95b7f8', status: '637a84b0bfb7b97506437b35' })
+        .populate('user')
+        .populate('products')
+        .populate('status')
 
-            res.json({
-                res: cart
-            })
-        })
+    res.json({
+        res: data
     })
 
 })
 
-//area shopping
-routes.get('/shoppingCart/:id', /* isAuthenticated, */ async (req, res) => {
-
-    const cartID = req.session.passport.user._id
-    const dataShopping = await ShoppingCart.find({ userID: cartID })
-
-    res.render('shoppingCart.html', { dataShopping })
-})
-
-// //add to cart
-// routes.get('/addShoppingCart/:id', async (req, res) => {
-//     const { id } = await req.params;
-
-//     const dataProduct = await Product.findById(id)
-
-//     const session = await req.session
-
-//     if (req.user != undefined) {
-//         console.log('vieje creado');
-//         await shoppingCart(dataProduct, session)
-//     } else {
-//         console.log('no se pudo crear');
-//     }
-//     res.redirect('/shoppingCart/:id')
-// })
-
+//add to cart
 routes.post("/addShoppingCart", async (req, res) => {
     try {
-        const data = await req.bod
+        const data = await req.body
         await shoppingCart.addShoppingCart(data, res)
     } catch (error) {
-        res.json({
-            status: 400,
-            response: 'Hubo un Error al Agregar al Carrito'
-        })
+        onMessage(res, 'Error al Reservar el Viaje', 400, error, null)
+    }
+})
+
+routes.delete("/deleteShoppingCart", async (req, res) => {
+    try {
+
+        const data = await req.body
+
+        await shoppingCart.deleteShoppingCart(data, res)
+
+    } catch (error) {
+        onMessage(res, 'Error al Borrar el Viaje', 400, error, null)
+    }
+})
+
+//get cart
+routes.get("/getShoppingCart/:user", async (req, res) => {
+    try {
+        const { user } = await req.params
+        await shoppingCart.getShoppingCart(user, res)
+    } catch (error) {
+        onMessage(res, 'Error al traer el Carrito', 400, error, null)
     }
 })
 
@@ -117,34 +102,23 @@ routes.get('/getProducts', async (req, res) => {
         const data = await Product.find()
 
         if (data.length) {
-            return res.json({
-                status: 'success',
-                data
-            })
+            onMessage(res, 'Success', 200, null, data)
         }
 
     } catch (error) {
-        return res.json({
-            status: 'Error',
-            response: 'Hubo un error'
-        })
+        onMessage(res, 'Hubo un error', 400, error, [])
     }
 })
 
+//traer un unico Travel
 routes.get('/getUniqueProducts/:id', async (req, res) => {
     const { id } = req.params
     console.log(req.params);
     const data = await Product.findById(id)
     try {
-        res.json({
-            status: 200,
-            response: data
-        })
+        onMessage(res, 'Datos traidos con Exito', 200, null, data)
     } catch (error) {
-        res.json({
-            status: 200,
-            response: "Hubo un Error al Buscar el Viaje"
-        })
+        onMessage(res, 'Hubo un Error al Buscar el Viaje', 400, error, [])
     }
 
 })
@@ -167,7 +141,5 @@ routes.put('/manejadorCMS/update', async (req, res) => {
 
     await CMSManagement.updateTravel(res, data, req)
 })
-
-//get Statuses
 
 module.exports = routes

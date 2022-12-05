@@ -1,33 +1,85 @@
-const shoppingCart = require('../models/shoppingCart')
+const shoppingCart = require('../models/shoppingCart');
+const travelStatuses = require('../models/travelStatuses');
+const onMessage = require('../utils');
 
-async function addShoppingCart(data, res) {
+const getStatus = async (id) => {
+    const status = await travelStatuses.findOne({ id: id })
+    return status._id
+}
 
-    console.log(data);
+const addShoppingCart = async (data, res) => {
+    try {
 
+        const cart = new shoppingCart({
+            date: data.date,
+            products: data.products,
+            user: data.user,
+            status: await getStatus(data.status)
+        })
 
-    // const addShoppingCart = await new shoppingCart()
-    // const sessionData = session.passport.user
+        await cart.save((err, result) => {
+            if (err) {
+                onMessage(res, 'Error al Reservar el Viaje', 400, error, null)
+            }
+            onMessage(res, 'Viaje Reservado', 200, null, result)
+        })
 
-    // addShoppingCart.destino = data.destino,
-    //     addShoppingCart.descripcion = data.descripcion,
-    //     addShoppingCart.precio = data.precio,
-    //     addShoppingCart.imgURL = data.imgURL,
-    //     addShoppingCart.public_id = data.public_id,
+    } catch (error) {
+        onMessage(res, 'Error al Reservar el Viaje', 400, error, null)
+    }
+}
 
-    //     //datos del usuario tomado de la session
-    //     addShoppingCart.user = sessionData.username,
-    //     addShoppingCart.userID = sessionData._id,
-    //     addShoppingCart.userEmail = sessionData.email
+const getShoppingCart = async (user, res) => {
+    try {
+        const statusId = await getStatus(1)
 
-    // addShoppingCart.save()
+        const cart = await shoppingCart.find({ user: user, status: statusId })
+            .populate('user')
+            .populate('products')
+            .populate('status')
 
+        const data = []
 
-    return res.json({
-        status: 200,
-        response: 'Viaje agregado al Carrito con Exito'
-    })
+        cart.map(item => {
+            const obj = {
+                id: item._id,
+                userId: item.user._id,
+                product: {
+                    id: item.products._id,
+                    name: item.products.destino,
+                    price: item.products.precio
+                },
+                status: item.status.id,
+            }
+
+            data.push(obj)
+        })
+
+        onMessage(res, 'Success', 200, null, data)
+
+    } catch (error) {
+        onMessage(res, 'Error al traer el Carrito', 400, error, null)
+    }
+}
+
+const deleteShoppingCart = async (data, res) => {
+
+    try {
+
+        const travel = await shoppingCart.findOne({ _id: data.id })
+
+        if (!travel) {
+            return onMessage(res, 'No se pudo encontrar el vieje', 400, null, null)
+        }
+
+        await shoppingCart.deleteOne({ _id: travel._id })
+
+        return onMessage(res, 'Viaje Borrado', 200, null, null)
+
+    } catch (error) {
+        onMessage(res, 'Error al borrar el vieje', 400, null, null)
+    }
 
 }
 
-
-module.exports = { addShoppingCart }
+module.exports = { addShoppingCart, getShoppingCart, deleteShoppingCart }

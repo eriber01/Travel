@@ -1,15 +1,11 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema;
-const Product = require('../models/product')
-
-const User = require('../models/user')
 
 const ShoppingCart = new Schema({
-    id: String,
-    userID: String,
-    productId: String,
-    user: { type:  Schema.ObjectId, ref: 'User'},
-    products: {type: Schema.ObjectId, ref: 'Product'}
+    user: { type: Schema.Types.ObjectId, ref: 'users' },
+    products: { type: Schema.Types.ObjectId, ref: 'product' },
+    status: { type: Schema.Types.ObjectId, ref: 'travel_statuses' },
+    date: Date
 })
 
 

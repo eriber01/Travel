@@ -1,5 +1,6 @@
 import React from "react";
 import AuthButtons from "../AuthButtons/AuthButtons";
+import CartButton from "../cartButton/cartButton";
 
 
 export const AuthNav = ({ path, onAuth, text, isCMS }) => {

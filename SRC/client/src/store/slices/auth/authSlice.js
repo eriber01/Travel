@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    user: {
+    users: {
         _id: "",
         name: "",
         email: "",
@@ -17,7 +17,7 @@ export const authSlice = createSlice({
         userData: (state, { payload }) => {
             console.log(payload);
 
-            state.user = payload
+            state.users = payload
         }
     }
 })
