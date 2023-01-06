@@ -1,13 +1,13 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addCartSlice } from "../../store/slices/cart/cartSlice";
-import { addCart } from "../../services/cartManager";
+import { addCart, getCart } from "../../services/cartManager";
 import { useAuth0 } from "@auth0/auth0-react";
 
 export const BestOfferts = () => {
 	const dispatch = useDispatch()
-
+	const navigate = useNavigate()
 	const { user } = useAuth0()
 
 	const { travels: { travels }, auth: { users } } = useSelector(state => state)
@@ -40,6 +40,9 @@ export const BestOfferts = () => {
 										<button className="btn btn-success w-75 p-0 mb-2"
 											onClick={() => {
 												addCart({ id: item._id, users, user })
+												getCart(users._id).then(resCart => {
+													dispatch(addCartSlice(resCart))
+												})
 											}}
 										>Reservar</button>
 										<Link className="btn btn-success w-75 p-0"

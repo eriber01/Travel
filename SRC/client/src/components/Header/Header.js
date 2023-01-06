@@ -28,7 +28,7 @@ export const Header = () => {
                         <Nav.Link className="h6 link-secondary nav-link text-white" href='#offers'>Travels</Nav.Link>
                         <Nav.Link className="h6 link-secondary nav-link text-white me-3" href='#contact'>Contact</Nav.Link>
                         <AuthButtons />
-                        <CartButton />
+                        {/* <CartButton /> */}
                     </Nav>
                 </Navbar.Collapse>
             </Container>

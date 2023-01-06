@@ -58,15 +58,28 @@ routes.post("/addShoppingCart", async (req, res) => {
     }
 })
 
+//delete cart
 routes.delete("/deleteShoppingCart", async (req, res) => {
     try {
-
         const data = await req.body
-
         await shoppingCart.deleteShoppingCart(data, res)
-
     } catch (error) {
         onMessage(res, 'Error al Borrar el Viaje', 400, error, null)
+    }
+})
+
+//update cart
+routes.put('/paymentShoppingCart', async (req, res) => {
+    try {
+        const { data } = await req.body
+
+        console.log('******* VA A PAGAR EL VIAJE *************');
+        console.log(data);
+
+        await shoppingCart.paymentShoppingCart(data, res)
+
+    } catch (error) {
+        onMessage(res, 'Error al Realizar el Pago', 400, error, null)
     }
 })
 

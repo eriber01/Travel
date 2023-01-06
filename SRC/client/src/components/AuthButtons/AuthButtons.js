@@ -19,7 +19,7 @@ const AuthButtons = ({ isCMS }) => {
               <img className='rounded-circle opacity-100' style={{ width: '15%' }} referrerPolicy='no-referrer' src={user.picture} alt="" />
             </div>
             <div>
-              <button className='btn btn-dark' onClick={() => logout({ returnTo: window.location.origin })}>Log Out</button>
+              <button className='btn btn-dark mx-3' onClick={() => logout({ returnTo: window.location.origin })}>Log Out</button>
             </div>
             
             {isAuthorized(user?.sub) && !isCMS ?

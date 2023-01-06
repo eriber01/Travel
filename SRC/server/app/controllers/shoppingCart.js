@@ -82,4 +82,30 @@ const deleteShoppingCart = async (data, res) => {
 
 }
 
-module.exports = { addShoppingCart, getShoppingCart, deleteShoppingCart }
+const paymentShoppingCart = async (data, res) => {
+    console.log('la data en la funcion: ', data);
+
+    try {
+        const status = await getStatus(2)
+
+        await Promise.all(
+            data.map(async item => {
+                console.log(item);
+
+                const travel = await shoppingCart.findOne({ _id: item })
+
+                if (travel) {
+                    await shoppingCart.updateOne({ _id: travel._id }, { status: status })
+                    return onMessage(res, 'Viaje pagado', 200, null, null)
+                }
+
+                return onMessage(res, 'No se pudo encontrar el vieje', 400, null, null)
+            })
+        )
+
+    } catch (error) {
+        onMessage(res, 'Al pagar el Viaje', 400, error, null)
+    }
+}
+
+module.exports = { addShoppingCart, getShoppingCart, deleteShoppingCart, paymentShoppingCart }

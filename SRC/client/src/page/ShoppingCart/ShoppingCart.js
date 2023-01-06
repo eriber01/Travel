@@ -47,12 +47,9 @@ export const ShoppingCart = () => {
                             <button
                               onClick={() => {
                                 removeCart(item.id)
-
                                 getCart(users._id).then(resCart => {
-                                  console.log(resCart);
                                   dispatch(addCartSlice(resCart))
                                 })
-
                               }}
                               className="btn btn-danger p-0 m-0 pe-2 px-2">Borrar</button>
                           </th>

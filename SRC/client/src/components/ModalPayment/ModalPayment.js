@@ -1,8 +1,15 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getCart, paymentCart } from "../../services/cartManager";
+import { addCartSlice } from "../../store/slices/cart/cartSlice";
 
 
 export const ModalPayment = ({ open, action }) => {
+    const dispatch = useDispatch()
 
+    const { cart: { cart }, auth: { users } } = useSelector(state => state)
+
+    console.log(users);
 
     return (
         <div>
@@ -20,7 +27,11 @@ export const ModalPayment = ({ open, action }) => {
 
                         <div className="d-flex flex-column justify-content-center border h-50">
                             <p className="">Estas seguro de que deseas Confirmar el Pago</p>
-                            <p>El monto total es de: 500</p>
+                            <p>El monto total es de: {
+                                cart?.reduce((prev, curr) => {
+                                    return prev + curr.product.price
+                                }, 0)
+                            }</p>
                         </div>
 
                         <div className="d-flex align-items-center justify-content-end h-25">
@@ -33,6 +44,12 @@ export const ModalPayment = ({ open, action }) => {
 
                             <button
                                 className="btn btn-success text-white me-3"
+                                onClick={() => {
+                                    paymentCart(cart)
+                                    getCart(users._id).then(resCart => {
+                                        dispatch(addCartSlice(resCart))
+                                    })
+                                }}
                             >
                                 Aceptar
                             </button>

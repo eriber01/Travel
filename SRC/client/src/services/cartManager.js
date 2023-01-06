@@ -38,11 +38,7 @@ export const addCart = async ({ id, users, user }) => {
 }
 
 export const getCart = async (user) => {
-
-    console.log(user);
-
     try {
-
         const { data } = await axios.get(`/api/getShoppingCart/${user}`)
 
         if (data.status === 200) {
@@ -55,8 +51,6 @@ export const getCart = async (user) => {
     } catch (error) {
         toast.error(error?.response)
     }
-
-
 }
 
 export const removeCart = async (id) => {
@@ -71,4 +65,27 @@ export const removeCart = async (id) => {
         toast.error(error.response)
     }
 
+}
+
+export const paymentCart = async (item) => {
+    console.log('la data: ', item);
+
+    const ids = item.map(item => item.id)
+    console.log(ids);
+    try {
+        await axios.put('/api/paymentShoppingCart', { data: ids })
+            .then(res => {
+
+                if (res.status === 200) {
+                    console.log('res: ', res);
+                    toast.success(res.data.response)
+                    console.log(res.data);
+                    return res.data
+                }
+
+                toast.error(res.data.response)
+            })
+    } catch (error) {
+        toast.error(error.response)
+    }
 }

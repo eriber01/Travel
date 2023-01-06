@@ -1,9 +1,10 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useParams } from "react-router-dom";
-import { addCart } from "../../services/cartManager";
+import { useParams, useNavigate } from "react-router-dom";
+import { addCart, getCart } from "../../services/cartManager";
 import { CmsManager } from "../../services/CmsManager";
+import { addCartSlice } from "../../store/slices/cart/cartSlice";
 import { getTravelDetails } from "../../store/slices/travels/travelSlice";
 import { AuthNav } from "../AuthNav/AuthNav";
 import './details.css'
@@ -11,6 +12,7 @@ export const DetailsTravel = () => {
   const { id } = useParams()
   const dispatch = useDispatch()
   const { user } = useAuth0()
+  const navigate = useNavigate()
 
   useEffect(() => {
 
@@ -67,6 +69,10 @@ export const DetailsTravel = () => {
             className="btn btn-success mt-3"
             onClick={() => {
               addCart({ id: item._id, users, user })
+              getCart(users._id).then(resCart => {
+                dispatch(addCartSlice(resCart))
+                navigate('/')
+              })
             }}
           >Reservar el Viaje</button>
         </div>
