@@ -1,28 +1,18 @@
-import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { addCart } from "../../store/slices/cart/cartSlice";
-import { CmsManager } from "../../services/CmsManager";
-import { getTravelDetails } from "../../store/slices/travels/travelSlice";
-// import { CmsManager } from "../../services/CmsManager";
+import { addCartSlice } from "../../store/slices/cart/cartSlice";
+import { addCart, getCart } from "../../services/cartManager";
+import { useAuth0 } from "@auth0/auth0-react";
 
 export const BestOfferts = () => {
-
 	const dispatch = useDispatch()
+	const navigate = useNavigate()
+	const { user } = useAuth0()
 
-	const { travels } = useSelector(state => state.travels)
-
+	const { travels: { travels }, auth: { users } } = useSelector(state => state)
 	console.log(travels);
-
-	const getUniqueTravels = async (id) => {
-
-		await CmsManager(id, 'getTravels', null, null)
-			.then(res => {
-				console.log(res);
-				dispatch(getTravelDetails(res))
-			})
-	}
-
+	console.log(users);
 	return (
 		<div className="offert" id="offers">
 			<div className="title-best">
@@ -33,7 +23,7 @@ export const BestOfferts = () => {
 				<div className="travels">
 
 					{
-						travels.map(item => (
+						travels?.map(item => (
 							<div key={item._id} className="card text-center d-flex m-3 flex-column shadow-lg cards"
 								style={{ transition: 'all 600ms ease', width: '400px' }}>
 								<img className="card-img-top" src={item.imgURL} alt="" />
@@ -49,13 +39,14 @@ export const BestOfferts = () => {
 									<div className="travel-opcion">
 										<button className="btn btn-success w-75 p-0 mb-2"
 											onClick={() => {
-												dispatch(addCart({ id: item._id, price: item.precio, name: item.destino }))
+												addCart({ id: item._id, users, user })
+												getCart(users._id).then(resCart => {
+													dispatch(addCartSlice(resCart))
+												})
 											}}
 										>Reservar</button>
-										{/* <a href="/#">Ver mas detalles</a> */}
 										<Link className="btn btn-success w-75 p-0"
 											to={`/detailsTravel/${item._id}`}
-											// onClick={() => getUniqueTravels(item._id)}
 										>
 											Ver mas detalles
 										</Link>

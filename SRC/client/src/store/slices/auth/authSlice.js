@@ -1,27 +1,29 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { useAuth0 } from '@auth0/auth0-react'
 
 const initialState = {
-    user: {}
+    users: {
+        _id: "",
+        name: "",
+        email: "",
+        authId: "",
+        rol: "",
+    }
 }
 
 export const authSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
-        loginAction: (state, action) => {
-            console.log(action.payload);
+        userData: (state, { payload }) => {
+            console.log(payload);
 
-            state.user = { name: 'eriber' }
-        },
-        logOutAction: (state) => {
-            console.log('logOut');
+            state.users = payload
         }
     }
 })
 
 
-export const { loginAction, logOutAction } = authSlice.actions
+export const { userData } = authSlice.actions
 
 
 export default authSlice.reducer

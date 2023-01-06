@@ -8,6 +8,7 @@ Cloudinary.config(cloudinaryConfig)
 
 //manejador de archivos
 const fs_extra = require('fs-extra')
+const onMessage = require('../utils')
 
 
 
@@ -29,17 +30,13 @@ async function createProduct(req, res) {
 
     await newProduct.save((err, result) => {
         if (err) {
-            console.log('hay un error');
-            return res.json({
-                status: 'error',
-                response: 'Hubo un error'
-            })
+
+            onMessage(res, 'Hubo un error al Crear el Viaje', 400, err, [])
+
         }
 
-        return res.json({
-            status: 'success',
-            response: 'El vieje se creo Correctamente'
-        })
+        onMessage(res, 'El vieje se creo Correctamente', 200, err, null)
+
     })
 
     //elimina el archivo subido del servidor node
@@ -53,25 +50,16 @@ async function deleteTravel(data, res) {
         const travel = await Product.findById(data._id)
 
         if (!travel) {
-            return res.json({
-                status: 404,
-                response: 'El viaje no fue encontrado'
-            })
+            onMessage(res, 'El viaje no fue encontrado', 404, null, null)
         }
 
         await Product.remove({ _id: travel._id })
         await Cloudinary.v2.uploader.destroy(travel.public_id)
 
-        return res.json({
-            status: 200,
-            response: 'Viaje Borrado de manera Exitosa'
-        })
+        onMessage(res, 'Viaje Borrado de manera Exitosa', 200, null, null)
 
     } catch (error) {
-        return res.json({
-            status: 404,
-            response: 'Error al borrar el viaje'
-        })
+        onMessage(res, 'Error al borrar el viaje', 404, error, null)
     }
 }
 
@@ -85,21 +73,13 @@ async function updateTravel(res, data, req) {
         const travel = await Product.findById(data._id)
 
         if (!travel) {
-            return res.json({
-                status: 404,
-                response: 'El viaje no fue Encontrado'
-            })
+            onMessage(res, 'El viaje no fue encontrado', 404, null, null)
         }
-
-        console.log(data);
 
         if (data.hasImg === 'true') {
             await Cloudinary.v2.uploader.destroy(data.public_id)
             ImageData = await Cloudinary.v2.uploader.upload(req.file.path)
-            console.log('entro');
         }
-
-        console.log('BOOOOM');
 
         const payload = {
             destino: data.destino,
@@ -113,17 +93,11 @@ async function updateTravel(res, data, req) {
 
         await data.hasImg ? fs_extra.unlink(req.file.path) : null
 
+        onMessage(res, 'Viaje actualizado de manera Exitosa', 200, null, null)
 
-        return res.json({
-            status: 200,
-            response: 'Viaje actualizado de manera Exitosa'
-        })
 
     } catch (error) {
-        return res.json({
-            status: 404,
-            response: "Error al Actualizar el Viaje"
-        })
+        onMessage(res, 'Error al Actualizar el Viaje', 404, null, null)
     }
 
 }

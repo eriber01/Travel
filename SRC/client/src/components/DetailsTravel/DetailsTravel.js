@@ -1,31 +1,31 @@
+import { useAuth0 } from "@auth0/auth0-react";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { addCart, getCart } from "../../services/cartManager";
 import { CmsManager } from "../../services/CmsManager";
+import { addCartSlice } from "../../store/slices/cart/cartSlice";
 import { getTravelDetails } from "../../store/slices/travels/travelSlice";
 import { AuthNav } from "../AuthNav/AuthNav";
 import './details.css'
 export const DetailsTravel = () => {
   const { id } = useParams()
   const dispatch = useDispatch()
-
-  console.log(id);
+  const { user } = useAuth0()
+  const navigate = useNavigate()
 
   useEffect(() => {
-    // const getUniqueTravels = async (id) => {
 
     CmsManager(id, 'getUniqueTravels', null, null)
       .then(res => {
         console.log(res);
         dispatch(getTravelDetails(res))
       })
-    // }
   }, [dispatch, id])
 
 
-  const { travelDetails } = useSelector(state => state.travels)
+  const { travels: { travelDetails }, auth: { users } } = useSelector(state => state)
 
-  console.log(travelDetails);
   setTimeout(() => {
     const leftTransition = document.querySelector('.image-travel')
     leftTransition?.classList?.remove('leftTransition')
@@ -34,15 +34,6 @@ export const DetailsTravel = () => {
     rightTransition?.classList?.remove('rightTransition')
   }, 300)
 
-  //   {
-  //     "_id": "6361a0b16cee20397ea0f329",
-  //     "destino": "asdasdasd3",
-  //     "descripcion": "asdasdads",
-  //     "precio": 119,
-  //     "imgURL": "http://res.cloudinary.com/eriber/image/upload/v1667342513/q2kk2oqkxfs2xcrtiydz.jpg",
-  //     "public_id": "q2kk2oqkxfs2xcrtiydz",
-  //     "__v": 0
-  // }
   return (
     <div>
 
@@ -50,8 +41,7 @@ export const DetailsTravel = () => {
 
       {travelDetails.map((item, index) => {
 
-
-        return <div className="details-container mt-5 mb-5">
+        return <div key={index} className="details-container mt-5 mb-5">
 
           <div className="details">
             <div className="image-travel leftTransition">
@@ -75,7 +65,16 @@ export const DetailsTravel = () => {
             </div>
           </div>
 
-          <button className="btn btn-success mt-3" href="/addShoppingCart/<%= DataTravel._id %> ">Reservar el Viaje</button>
+          <button
+            className="btn btn-success mt-3"
+            onClick={() => {
+              addCart({ id: item._id, users, user })
+              getCart(users._id).then(resCart => {
+                dispatch(addCartSlice(resCart))
+                navigate('/')
+              })
+            }}
+          >Reservar el Viaje</button>
         </div>
       })
       }
