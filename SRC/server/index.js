@@ -54,7 +54,7 @@ const storage = multer.diskStorage({
 
 app.use(multer({storage}).single('img'))
 
-//static files
+//static file
 app.use(express.static(path.join(__dirname + '/public')))
 
 //config de la cookie
