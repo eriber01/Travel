@@ -4,7 +4,7 @@
   "description": "Migracion a nodejs de Travel Page",
   "main": "index.js",
   "scripts": {
-    "start": "cross-env NODE_ENV=production node SRC/index.js",
+    "start": "cross-env NODE_ENV=production node index.js",
     "dev": "cross-env NODE_ENV=development nodemon SRC/index.js"
   },
   "author": "Eriber Tejeda",

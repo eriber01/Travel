@@ -19,9 +19,9 @@ const session = require('cookie-session')
 const multer = require('multer')
 
 //permite usar las variables de entorno
-if(process.env.NODE_ENV !== 'production'){
+// if(process.env.NODE_ENV !== 'production'){
     require('dotenv').config()
-}
+// }
 
 //exportacion de la url de la DB
 const connectDB = require('./config/database')
