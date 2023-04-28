@@ -1,0 +1,18 @@
+# fly.toml file generated for travel-api on 2023-04-27T20:08:18-04:00
+
+app = "travel-api"
+primary_region = "mia"
+
+[env]
+  PORT = "8080"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+
+[checks]
+  [checks.alive]
+    type = "tcp"
+    interval = "15s"
+    timeout = "2s"
+    grace_period = "5s"

@@ -3,6 +3,7 @@ const { static } = require('express')
 const express = require('express')
 //convertir la informacion que me llega del navegador al servidor
 const bodyParser = require('body-parser')
+const cors = require('cors')
 const app = express()
 //ayuda con las direciones de las carpetas
 const path = require('path')
@@ -30,6 +31,8 @@ connectDB()
 
 //flash
 app.use(flash())
+app.use(cors())
+
 
 //settings
 const port = process.env.PORT || 3001

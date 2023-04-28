@@ -1,7 +1,7 @@
 import axios from "axios";
 import moment from "moment";
 import { toast } from "react-toastify";
-
+import { config } from "../config";
 export const addCart = async ({ id, users, user }) => {
 
     if (!users._id) {
@@ -17,7 +17,7 @@ export const addCart = async ({ id, users, user }) => {
             date: moment(new Date()).format('YYYY/MM/DD')
         }
 
-        await axios.post('/api/addShoppingCart', obj)
+        await axios.post(`${config.api}/api/addShoppingCart`, obj)
             .then((res) => {
 
                 if (res.data.status === 200) {
@@ -39,7 +39,7 @@ export const addCart = async ({ id, users, user }) => {
 
 export const getCart = async (user) => {
     try {
-        const { data } = await axios.get(`/api/getShoppingCart/${user}`)
+        const { data } = await axios.get(`${config.api}/api/getShoppingCart/${user}`)
 
         if (data.status === 200) {
             console.log(data.data);
@@ -57,7 +57,7 @@ export const removeCart = async (id) => {
 
     try {
 
-        await axios.delete('/api/deleteShoppingCart', { data: { id } })
+        await axios.delete(`${config.api}/api/deleteShoppingCart`, { data: { id } })
             .then(res => {
                 toast.success(res.data.response)
             })
@@ -73,7 +73,7 @@ export const paymentCart = async (item) => {
     const ids = item.map(item => item.id)
     console.log(ids);
     try {
-        await axios.put('/api/paymentShoppingCart', { data: ids })
+        await axios.put(`${config.api}/api/paymentShoppingCart`, { data: ids })
             .then(res => {
 
                 if (res.status === 200) {

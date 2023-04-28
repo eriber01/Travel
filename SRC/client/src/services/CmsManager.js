@@ -1,11 +1,12 @@
 import axios from "axios"
 import { toast } from "react-toastify"
 import axiosConfig from "./axiosConfig"
+import { config } from "../config"
 
 export const CmsManager = async (data, key, e, reset) => {
     const id = data
 
-    const config = axiosConfig()
+    const configAxios = axiosConfig()
 
     switch (key) {
         case 'create':
@@ -38,7 +39,7 @@ export const CmsManager = async (data, key, e, reset) => {
             e.target.precio.value = ''
             e.target.img.value = ''
 
-            await axios.post('/api/manejadorCMS/createProduct', data, config).then(res => {
+            await axios.post(`${config.api}/api/manejadorCMS/createProduct`, data, configAxios).then(res => {
                 if (data.status === 200) {
                     toast.success(data.response)
                 } else if (data.status === 404) {
@@ -52,7 +53,7 @@ export const CmsManager = async (data, key, e, reset) => {
             return;
         case 'updateTravels':
 
-            await axios.put('/api/manejadorCMS/update', data, config)
+            await axios.put(`${config.api}/api/manejadorCMS/update`, data, configAxios)
                 .then(res => {
                     if (res.data.status === 200) {
                         toast.success(res.data.response)
@@ -67,7 +68,7 @@ export const CmsManager = async (data, key, e, reset) => {
         case 'getTravels':
 
             try {
-                const { data } = await axios.get('/api/getProducts')
+                const { data } = await axios.get(`${config.api}/api/getProducts`)
                 if (data.status === 200) {
                     console.log(data);
                     return data
@@ -79,7 +80,7 @@ export const CmsManager = async (data, key, e, reset) => {
             return;
         case 'deleteTravels':
 
-            await axios.delete('/api/manejadorCMS/deleteCMS',
+            await axios.delete(`${config.api}/api/manejadorCMS/deleteCMS`,
                 { data })
                 .then(({ data }) => {
                     console.log(data);
@@ -97,7 +98,7 @@ export const CmsManager = async (data, key, e, reset) => {
         case "getUniqueTravels":
 
             try {
-                const { data } = await axios.get(`/api/getUniqueProducts/${id}`)
+                const { data } = await axios.get(`${config.api}/api/getUniqueProducts/${id}`)
                 if (data.status === 200) {
                     return data.data
                 }
